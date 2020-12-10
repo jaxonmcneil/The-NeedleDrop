@@ -34,7 +34,7 @@ class Album():
         self.get_features()
         
         #step 4
-        self.summarize()
+        #self.summarize()
         
     def get_tracks(self):
         '''
@@ -42,7 +42,7 @@ class Album():
         '''
         raw_tracks = self.client.spotify.album_tracks(album_id=self.id)
         for raw_track in pb(raw_tracks['items'], label=self.name + " by " + self.artists[0][0]):
-            self.tracks.append(Track(raw_track,self.client))
+            self.tracks.append(Track(raw_track,self.client, self.id))
             
     def get_features(self):
         '''
@@ -86,3 +86,11 @@ class Album():
         for track in self.tracks:
             duration = duration + track.duration
         self.duration = duration
+        
+    def to_psql(self):
+        values = (self.id, self.name, self.artists[0][1], self.score, self.year)
+        return values;
+    
+    def artist_psql(self):
+        return (self.artists[0][1], self.artists[0][0])
+        

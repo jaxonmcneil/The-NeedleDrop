@@ -4,7 +4,7 @@ class Track:
     This class stores basic data about a track as well it's audio analysis and and audio features pulled from the Spotify API
     '''
     
-    def __init__(self, raw_track,client):
+    def __init__(self, raw_track, client, album_id):
         '''
         Initialization of a Track:
         1. Sets basic variables
@@ -13,6 +13,7 @@ class Track:
         #step 1
         self.name = raw_track['name']
         self.id = raw_track['id']
+        self.album_id = album_id
         self.artists = [(a['name'],a['id']) for a in raw_track['artists']]
         self.client = client
         
@@ -22,8 +23,11 @@ class Track:
     def set_features(self,features):
         '''
         This method sets song features pulled from Spotify API
-        '''
+        
+        #below line is the columns to remove in order to summarize albums 
         remove = ['type', 'id', 'uri', 'track_href', 'analysis_url', 'key', 'tempo', 'time_signature', 'loudness', 'mode']
+        '''
+        remove = ['type', 'id', 'uri', 'track_href', 'analysis_url']
         for r in remove:
             del features[r]
         self.features = features
@@ -65,3 +69,9 @@ class Track:
         my_list.extend(analysis_list)
 
         return my_list
+    
+    def to_psql(self):
+        values = [self.id, self.album_id, self.name]
+        for key in self.features:
+            values.append(self.features[key])
+        return values
