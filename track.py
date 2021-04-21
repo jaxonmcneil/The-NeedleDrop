@@ -37,12 +37,11 @@ class Track:
         This method pulls relevant song analysis data from the Spotify API
         Note: API call is wrapped in a while True loop because this API call randomly times out
         '''
-        while True:
+        for i in range(3):
             try:
                 analysis = self.client.spotify.audio_analysis(track_id=self.id)['track']
                 break
             except Exception as e:
-                pass
                 continue
         remove = ['codestring', 'echoprintstring', 'echoprint_version', 'synchstring', 'synch_version', 'rhythmstring', 'rhythm_version', 'num_samples', 'sample_md5', 'offset_seconds', 'window_seconds', 'analysis_sample_rate', 'analysis_channels', 'code_version']
         for r in remove:
